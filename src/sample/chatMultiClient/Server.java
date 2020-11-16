@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Server {
     private int port;
     public static ArrayList<Socket> listSK;
+    public ArrayList<String> names;
 
     public Server(int port) {
         this.port = port;

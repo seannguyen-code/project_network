@@ -10,19 +10,45 @@ import java.util.Scanner;
 public class Client {
     private InetAddress host;
     private int port;
+    private String name;
 
     public Client(InetAddress host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    public void nameRegister(Socket client) throws IOException {
+        DataInputStream dis = new DataInputStream(client.getInputStream());
+
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Nhập vào tên của bạn: ");
+            name = sc.nextLine();
+
+            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            dos.writeUTF(name);
+            while (true) {
+                String msg = dis.readUTF();
+                System.out.println(msg);
+                if (msg.contains("Registration Completed Successfully")) break;
+                sc = new Scanner(System.in);
+                System.out.print("Nhập vào tên của bạn: ");
+                name = sc.nextLine();
+
+                dos = new DataOutputStream(client.getOutputStream());
+                dos.writeUTF(name);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void execute() throws IOException {
         //Phần bổ sung
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Nhập vào tên của bạn: ");
-        String name = sc.nextLine();
-
         Socket client = new Socket(host, port);
+
+        nameRegister(client);
+
         ReadClient read = new ReadClient(client);
         read.start();
         WriteClient write = new WriteClient(client, name);
