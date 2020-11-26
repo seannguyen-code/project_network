@@ -29,6 +29,10 @@ public class Server {
 
     public static int timeout;
 
+    // TODO:
+    // 1. Timeout moi stage. Roi`
+    // 2. Start game moi.
+    // 3. Thong bao, logs to all clients
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Server.listSK = new ArrayList<>();
@@ -113,21 +117,6 @@ public class Server {
             else break;
         } while (true);
 
-
-        // Nhap timeout
-        do {
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Nhap thoi gian Timeout: ");
-            String n = sc.nextLine();
-            try{ timeout = Integer.parseInt(n);} catch (Exception e) {}
-
-            if (timeout <= 5 || timeout >= 60) {
-                System.out.println("Thoi gian hoi bi lech, thu nhap mot so tu 5 toi 60 di`");
-                continue;
-            }
-            else break;
-        } while (true);
-
         // Khoi tao diem cho N
         Server.points = new ArrayList<>();
         for (int i=0; i< Server.numOfPlayers; ++i) Server.points.add(1);
@@ -160,9 +149,28 @@ public class Server {
                     System.out.println("Va nguoi CHIEN THANG la`: " + Server.names.get(0));
                     break;
                 }
+                else if (Server.numOfPlayers == 0) {
+                    endGame = true;
+                    System.out.println("Lam` deo gi` con` ai nua~ dau: ");
+                    break;
+                }
                 j++;
             }
             if (endGame) break;
+
+            // Nhap timeout
+            do {
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Nhap thoi gian Timeout: ");
+                String n = sc.nextLine();
+                try{ timeout = Integer.parseInt(n);} catch (Exception e) {}
+
+                if (timeout < 5 || timeout > 60) {
+                    System.out.println("Thoi gian hoi bi lech, thu nhap mot so tu 5 toi 60 di`");
+                    continue;
+                }
+                else break;
+            } while (true);
 
             // Tao hai so ngau nhien
             int randomNum1 = ThreadLocalRandom.current().nextInt(-10000, 10000 + 1);
@@ -234,6 +242,22 @@ public class Server {
                         Server.points.set(i, value_at_i);
                     }
                     System.out.println(Server.names.get(i) + " dat duoc: " + Server.points.get(i) + " diem");
+                }
+                // Loai nguoi choi thua 3 lan lien tiep
+                int tempN = Server.numOfPlayers;
+                for (int i=0; i< numOfPlayers; ++i) {
+                    System.out.println("Wrong Ans Count:" + Server.wrongAnsCount.get(i) + Server.names.get(i));
+                    if (Server.wrongAnsCount.get(i) >= 3) {
+                        Server.listSK.get(i).close();
+                        System.out.println("Đã ngắt kết nối với " + Server.names.get(i));
+                        Server.listSK.remove(i);
+                        Server.names.remove(i);
+                        Server.wrongAnsCount.remove(i);
+                        Server.receivedAnsCorrect.remove(i);
+
+                        Server.numOfPlayers -= 1;
+                        i -= 1;
+                    }
                 }
                 continue;
             }
@@ -319,7 +343,7 @@ class ReadAnswer extends Thread {
             if (matcher.find()) {
                 extractNum = matcher.group();
             }
-            //System.out.println(extractNum);
+            System.out.println(extractNum);
 
             int result_int = Integer.parseInt(extractNum);
             System.out.println("Ket qua cua " + Server.names.get(socketIndex) + " :" + result_int);
