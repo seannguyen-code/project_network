@@ -117,6 +117,20 @@ public class Server {
             else break;
         } while (true);
 
+        // Nhap timeout
+        do {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Nhap thoi gian Timeout: ");
+            String n = sc.nextLine();
+            try{ timeout = Integer.parseInt(n);} catch (Exception e) {}
+
+            if (timeout < 5 || timeout > 60) {
+                System.out.println("Thoi gian hoi bi lech, thu nhap mot so tu 5 toi 60 di`");
+                continue;
+            }
+            else break;
+        } while (true);
+
         // Khoi tao diem cho N
         Server.points = new ArrayList<>();
         for (int i=0; i< Server.numOfPlayers; ++i) Server.points.add(1);
@@ -157,20 +171,6 @@ public class Server {
                 j++;
             }
             if (endGame) break;
-
-            // Nhap timeout
-            do {
-                Scanner sc = new Scanner(System.in);
-                System.out.println("Nhap thoi gian Timeout: ");
-                String n = sc.nextLine();
-                try{ timeout = Integer.parseInt(n);} catch (Exception e) {}
-
-                if (timeout < 5 || timeout > 60) {
-                    System.out.println("Thoi gian hoi bi lech, thu nhap mot so tu 5 toi 60 di`");
-                    continue;
-                }
-                else break;
-            } while (true);
 
             // Tao hai so ngau nhien
             int randomNum1 = ThreadLocalRandom.current().nextInt(-10000, 10000 + 1);
@@ -235,12 +235,18 @@ public class Server {
             // 3. Update diem handle no answers
             // Ko ai tra loi dung
             if (Server.firstSocket.isEmpty()) {
+                System.out.println("Ko ai tra loi dung");
                 for (int i=0; i< Server.numOfPlayers; ++i) {
+                    Server.wrongAnsCount.set(i, Server.wrongAnsCount.get(i) + 1);
                     if (Server.points.get(i) > 1) {
                         int value_at_i = Server.points.get(i);
                         value_at_i -= 1;
                         Server.points.set(i, value_at_i);
+
+
+                        System.out.println(Server.wrongAnsCount.get(i));
                     }
+                    System.out.println(Server.names.get(i) + ": wrongAnsCount: " + Server.wrongAnsCount.get(i));
                     System.out.println(Server.names.get(i) + " dat duoc: " + Server.points.get(i) + " diem");
                 }
                 // Loai nguoi choi thua 3 lan lien tiep
@@ -345,25 +351,29 @@ class ReadAnswer extends Thread {
             }
             System.out.println(extractNum);
 
-            int result_int = Integer.parseInt(extractNum);
-            System.out.println("Ket qua cua " + Server.names.get(socketIndex) + " :" + result_int);
+            try {
+                int result_int = Integer.parseInt(extractNum);
+                System.out.println("Ket qua cua " + Server.names.get(socketIndex) + " :" + result_int);
 
-            if (result_int == ReadAnswer.answer && Server.firstSocket.isEmpty()) {
-                Server.receivedAnsCorrect.set(socketIndex, true);
-                Server.firstSocket.add(socket);
-                Server.wrongAnsCount.set(socketIndex, 0);
+                if (result_int == ReadAnswer.answer && Server.firstSocket.isEmpty()) {
+                    Server.receivedAnsCorrect.set(socketIndex, true);
+                    Server.firstSocket.add(socket);
+                    Server.wrongAnsCount.set(socketIndex, 0);
+                } else if (result_int == ReadAnswer.answer) {
+                    Server.receivedAnsCorrect.set(socketIndex, true);
+                    Server.wrongAnsCount.set(socketIndex, 0);
+                } else {
+                    Server.wrongAnsCount.set(socketIndex, Server.wrongAnsCount.get(socketIndex) + 1);
+                }
+
+                System.out.println(Server.names.get(socketIndex) + ": receivedAnsCorrect: " + Server.receivedAnsCorrect.get(socketIndex));
+                System.out.println(Server.names.get(socketIndex) + ": wrongAnsCount: " + Server.wrongAnsCount.get(socketIndex));
             }
-            else if (result_int == ReadAnswer.answer) {
-                Server.receivedAnsCorrect.set(socketIndex, true);
-                Server.wrongAnsCount.set(socketIndex, 0);
-            }
-            else {
+            catch (Exception e) {
                 Server.wrongAnsCount.set(socketIndex, Server.wrongAnsCount.get(socketIndex) + 1);
+                System.out.println(Server.names.get(socketIndex) + ": receivedAnsCorrect: " + Server.receivedAnsCorrect.get(socketIndex));
+                System.out.println(Server.names.get(socketIndex) + ": wrongAnsCount: " + Server.wrongAnsCount.get(socketIndex));
             }
-
-            System.out.println(Server.names.get(socketIndex) + ": receivedAnsCorrect: " + Server.receivedAnsCorrect.get(socketIndex));
-            System.out.println(Server.names.get(socketIndex) + ": wrongAnsCount: " + Server.wrongAnsCount.get(socketIndex));
-
 
         } catch (Exception e) {
             try {
