@@ -20,10 +20,19 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Opening.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("rootScreen.fxml"));
             AnchorPane rootStackPane = loader.load();
             Scene scene = new Scene(rootStackPane);
             primaryStage.setScene(scene);
+            primaryStage.setHeight(425);
+            primaryStage.setWidth(630);
+
+            try{
+                System.out.println("Success");
+            }
+            catch (Exception e){
+                System.out.println("Failed!!!");
+            }
 
             rootStackPane.setOnMousePressed(mouseEvent -> {
                 x = mouseEvent.getSceneX();

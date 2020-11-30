@@ -52,10 +52,17 @@ public class OpeningController
     }
 
 
-//	public void rulePress(ActionEvent event) {
-//		FXMLLoader loader = new FXMLLoader();
-//		loader.setLocation(getClass().getResource("SignUp.fxml"));
-//	}
+	public void rulePress(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Rule.fxml"));
+		Pane pane = loader.load();
+		RuleController ruleController = loader.getController();
+		ruleController.setRootController(rootController);
+		rootController.setScreen(pane);
+	}
+
+	public void quitPress(ActionEvent event) throws IOException {
+		System.exit(0);
+	}
 
 	public void setRootController(RootController rootController) {
 		this.rootController = rootController;

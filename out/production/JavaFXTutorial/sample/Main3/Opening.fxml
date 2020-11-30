@@ -18,7 +18,7 @@
             <Image url="@images/logo.png" />
          </image>
       </ImageView>
-      <Button fx:id="ruleButton" cancelButton="true" layoutX="160.0" layoutY="280.0" mnemonicParsing="false" text="Rules" textAlignment="CENTER" textFill="#170404">
+      <Button fx:id="ruleButton" cancelButton="true" layoutX="160.0" layoutY="280.0" onAction="#rulePress" mnemonicParsing="false" text="Rules" textAlignment="CENTER" textFill="#170404">
          <font>
             <Font name="Courier" size="14.0" />
          </font>
@@ -28,7 +28,7 @@
             <Font name="Courier" size="18.0" />
          </font>
       </Button>
-      <Button fx:id="quitButton" cancelButton="true" layoutX="407.0" layoutY="280.0" mnemonicParsing="false" text="Quit" textAlignment="CENTER" textFill="#170404">
+      <Button fx:id="quitButton" cancelButton="true" layoutX="407.0" layoutY="280.0" onAction="#quitPress" mnemonicParsing="false" text="Quit" textAlignment="CENTER" textFill="#170404">
          <font>
             <Font name="Courier" size="14.0" />
          </font>
