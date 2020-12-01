@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Main3.ServerController">
+   <ImageView fitHeight="408.0" fitWidth="633.0" layoutY="-6.0">
+      <Image url="@image/background.png" />
+   </ImageView>
+   <TextField fx:id="Height1" layoutX="50.0" layoutY="32.0" prefHeight="28.0" prefWidth="224.0" promptText="Enter number of players">
+      <font>
+         <Font name="Tahoma" size="14.0" />
+      </font>
+   </TextField>
+   <TextField fx:id="Height" layoutX="50.0" layoutY="84.0" prefHeight="28.0" prefWidth="224.0" promptText="Enter race length">
+      <font>
+         <Font name="Tahoma" size="14.0" />
+      </font>
+   </TextField>
+   <TextField fx:id="Height2" layoutX="50.0" layoutY="136.0" prefHeight="28.0" prefWidth="224.0" promptText="Enter timeout for each question">
+      <font>
+         <Font name="Tahoma" size="14.0" />
+      </font>
+   </TextField>
+   <Button contentDisplay="BOTTOM" layoutX="52.0" layoutY="218.0" mnemonicParsing="false" style="-fx-background-color: #3498DB;" text="START GAME" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP">
+      <font>
+         <Font name="Tahoma" size="24.0" />
+      </font>
+      <effect>
+         <Reflection />
+      </effect></Button>
+   <ScrollPane fx:id="sp" hbarPolicy="NEVER" hmax="100.0" layoutX="401.0" layoutY="-2.0" opacity="0.7" prefHeight="400.0" prefWidth="232.0" vbarPolicy="ALWAYS" />
+</AnchorPane>
