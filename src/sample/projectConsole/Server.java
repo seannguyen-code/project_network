@@ -20,13 +20,9 @@ public class Server {
     public static ArrayList<Socket> listSK;
     public static ArrayList<String> names;
     public static ArrayList<Integer> points;
-    //public static int[] points;
     public static ArrayList<Boolean> receivedAnsCorrect;
-    //public static boolean[] receivedAnsCorrect;
     public static ArrayList<Integer> wrongAnsCount;
-    //public static int[] wrongAnsCount;
     public static ArrayList<Socket> firstSocket;
-
     public static int timeout;
 
     // TODO:
@@ -208,7 +204,7 @@ public class Server {
             try {
                 for (Socket item : Server.listSK) {
                     dos = new DataOutputStream(item.getOutputStream());
-                    dos.writeUTF("Tinh toan: " + foo);
+                    dos.writeUTF("Calculate: " + foo);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

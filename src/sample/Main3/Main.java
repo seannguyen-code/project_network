@@ -2,14 +2,15 @@ package sample.Main3;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import javafx.scene.image.Image;
-import javafx.stage.StageStyle;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Scanner;
 
 public class Main extends Application {
     private double x, y;
@@ -45,6 +46,12 @@ public class Main extends Application {
 
             primaryStage.show();
         }
-    }
+}
+
+
+
+
+
+
 
 
