@@ -1,19 +1,15 @@
-package sample.Main3;
+package sample.projectConsole;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 
 
 public class ServerController {
     @FXML
-    //private TextArea log;
+
     public ScrollPane sp;
-    /*
-    public ServerController() {
-        sp = new ScrollPane();
-    }*/
+
     @FXML
     private void initialize()
     {
