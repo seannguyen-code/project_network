@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 public class Server {
     public static int numOfPlayers;
     public static int raceLength;
-    private int port;
     public static ArrayList<Socket> listSK;
     public static ArrayList<String> names;
     public static ArrayList<Integer> points;
@@ -25,52 +24,49 @@ public class Server {
     public static ArrayList<Socket> firstSocket;
     public static int timeout;
 
-    // TODO:
-    // 1. Timeout moi stage. Roi`
-    // 2. Start game moi.
-    // 3. Thong bao, logs to all clients
-
     public static void main(String[] args) throws IOException, InterruptedException {
         Server.listSK = new ArrayList<>();
         Server.names = new ArrayList<>();
+        String playAgain = "Yes";
+
+        do {
 
         // Nhap so nguoi choi
         do {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Nhap so nguoi choi: ");
+        System.out.println("How many players?: ");
         String n = sc.nextLine();
 
         try{ Server.numOfPlayers = Integer.parseInt(n);} catch (Exception e) {}
         if (numOfPlayers < 2 || numOfPlayers > 10) {
-            System.out.println("Duu me tao keu nhap so ma`");
+            System.out.println("Players allow: 2->10`");
             continue;
         }
         else break;
         } while (true);
 
         // Nhan Socket va validate ten tui no
-        // TODO: Chuyen cai nay thanh non-blocking
-
         ServerSocket server = new ServerSocket(15797);
-
         System.out.println("Server is listening...");
         while (true) {
             Socket socket = server.accept();
-            System.out.println("Đã kết nối với " + socket.getInetAddress());
+            System.out.println("Connected with " + socket.getInetAddress());
             Server.listSK.add(socket);
+
             // Validate name
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             DataInputStream dis = new DataInputStream(socket.getInputStream());
             String name;
+
             while (true) {
             name = dis.readUTF();
             //Ten ko hop le
             if (!name.matches("^([A-Za-z][A-Za-z0-9_]*)$")) {
-                dos.writeUTF("Ten khong hop le, doi ten di");
+                dos.writeUTF("Wrong format, Try again!");
                 continue;
             }
             else if (name.length() > 10) {
-                dos.writeUTF("Ten dai qua, doi ten di");
+                dos.writeUTF("Name is too long, Try again!");
                 continue;
             }
             // Trung ten
@@ -78,19 +74,19 @@ public class Server {
                 boolean duplicateName = false;
                 for (String n : Server.names) {
                     if (name.equals(n)) {
-                        dos.writeUTF("Ten da ton tai, doi ten di");
+                        dos.writeUTF("Name already exists");
                         duplicateName = true;
                         break;
                     }
                 }
                 if (duplicateName) continue;
                 else {
-                    System.out.println(name + " Hop le");
+                    System.out.println("Player accepted: " + name);
                     break;
                 }
             }
             else {
-                System.out.println(name + " Hop le");
+                System.out.println("Player accepted: " + name);
                 break;
             }
             }
@@ -99,15 +95,17 @@ public class Server {
             if (Server.listSK.size() == numOfPlayers) break;
         }
 
+        System.out.println("Enough Players, Game starts!");
+
         // Nhap race length
         do {
             Scanner sc = new Scanner(System.in);
-            System.out.println("Nhap do dai duong dua: ");
+            System.out.println("Input Race Length: ");
             String n = sc.nextLine();
             try{ raceLength = Integer.parseInt(n);} catch (Exception e) {}
 
             if (raceLength <= 3 || raceLength >= 26) {
-                System.out.println("Nhap mot so tu 4 toi 25`");
+                System.out.println("Race Len: 4->25`");
                 continue;
             }
             else break;
@@ -116,12 +114,12 @@ public class Server {
         // Nhap timeout
         do {
             Scanner sc = new Scanner(System.in);
-            System.out.println("Nhap thoi gian Timeout: ");
+            System.out.println("Input Timeout: ");
             String n = sc.nextLine();
             try{ timeout = Integer.parseInt(n);} catch (Exception e) {}
 
             if (timeout < 5 || timeout > 60) {
-                System.out.println("Thoi gian hoi bi lech, thu nhap mot so tu 5 toi 60 di`");
+                System.out.println("Timeout: 5->60");
                 continue;
             }
             else break;
@@ -151,17 +149,46 @@ public class Server {
             for (int point : Server.points) {
                 if (point >= Server.raceLength) {
                     endGame = true;
-                    System.out.println("Va nguoi CHIEN THANG la`: " + Server.names.get(j));
+                    System.out.println("The Winner is: " + Server.names.get(j));
+
+                    Socket winner = Server.listSK.get(j);
+                    DataOutputStream dos = new DataOutputStream(winner.getOutputStream());
+                    dos.writeUTF("WIN");
+
+                    try {
+                        for (Socket item : Server.listSK) {
+                            if (item != winner) {
+                                dos = new DataOutputStream(item.getOutputStream());
+                                dos.writeUTF("LOSE");
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     break;
                 }
                 else if (Server.numOfPlayers == 1) {
                     endGame = true;
-                    System.out.println("Va nguoi CHIEN THANG la`: " + Server.names.get(0));
+                    System.out.println("The Winner is: " + Server.names.get(0));
+                    Socket winner = Server.listSK.get(j);
+                    DataOutputStream dos = new DataOutputStream(winner.getOutputStream());
+                    dos.writeUTF("WIN");
                     break;
                 }
                 else if (Server.numOfPlayers == 0) {
                     endGame = true;
-                    System.out.println("Lam` deo gi` con` ai nua~ dau: ");
+                    System.out.println("0 player left, End Game!");
+                    try {
+                        for (Socket item : Server.listSK) {
+                            DataOutputStream dos = new DataOutputStream(item.getOutputStream());
+                            dos = new DataOutputStream(item.getOutputStream());
+                            dos.writeUTF("LOSE");
+
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
                 j++;
@@ -226,32 +253,40 @@ public class Server {
 
             }
 
-            TimeUnit.SECONDS.sleep(timeout);
+            for (int i = 0; i < timeout; ++i) {
+                for (Socket item: Server.listSK) {
+                    dos = new DataOutputStream(item.getOutputStream());
+                    dos.writeUTF("Time left: " + String.valueOf(timeout-i));
+                }
+                TimeUnit.SECONDS.sleep(1);
+            }
 
             // 3. Update diem handle no answers
             // Ko ai tra loi dung
             if (Server.firstSocket.isEmpty()) {
-                System.out.println("Ko ai tra loi dung");
+                System.out.println("No correct answer!");
                 for (int i=0; i< Server.numOfPlayers; ++i) {
-                    Server.wrongAnsCount.set(i, Server.wrongAnsCount.get(i) + 1);
+                    //Server.wrongAnsCount.set(i, Server.wrongAnsCount.get(i) + 1);
                     if (Server.points.get(i) > 1) {
                         int value_at_i = Server.points.get(i);
                         value_at_i -= 1;
                         Server.points.set(i, value_at_i);
-
-
-                        System.out.println(Server.wrongAnsCount.get(i));
                     }
-                    System.out.println(Server.names.get(i) + ": wrongAnsCount: " + Server.wrongAnsCount.get(i));
-                    System.out.println(Server.names.get(i) + " dat duoc: " + Server.points.get(i) + " diem");
+                    dos = new DataOutputStream(Server.listSK.get(i).getOutputStream());
+                    System.out.println(Server.names.get(i) + " answerd wrong " + Server.wrongAnsCount.get(i) + " times");
+                    System.out.println(Server.names.get(i) + " has " + Server.points.get(i) + " points");
+                    dos.writeUTF(Server.names.get(i) + " answerd wrong " + Server.wrongAnsCount.get(i) + " times");
+                    dos.writeUTF(Server.names.get(i) + " has " + Server.points.get(i) + " points");
                 }
                 // Loai nguoi choi thua 3 lan lien tiep
                 int tempN = Server.numOfPlayers;
                 for (int i=0; i< numOfPlayers; ++i) {
-                    System.out.println("Wrong Ans Count:" + Server.wrongAnsCount.get(i) + Server.names.get(i));
                     if (Server.wrongAnsCount.get(i) >= 3) {
+                        dos = new DataOutputStream(Server.listSK.get(i).getOutputStream());
+                        dos.writeUTF("LOSE");
                         Server.listSK.get(i).close();
-                        System.out.println("Đã ngắt kết nối với " + Server.names.get(i));
+                        System.out.println("Player removed: " + Server.names.get(i));
+
                         Server.listSK.remove(i);
                         Server.names.remove(i);
                         Server.wrongAnsCount.remove(i);
@@ -288,16 +323,32 @@ public class Server {
 
             // Thong bao ket qua
             for (int i=0; i< Server.numOfPlayers; ++i) {
-                System.out.println(Server.names.get(i) + " dat duoc: " + Server.points.get(i) + " diem");
+                dos = new DataOutputStream(Server.listSK.get(i).getOutputStream());
+                dos.writeUTF("The result is: " + result);
+                System.out.println("Player " + Server.names.get(i) + " answerd wrong " + Server.wrongAnsCount.get(i) + " times");
+                System.out.println("Player " + Server.names.get(i) + " has " + Server.points.get(i) + " points");
+                dos.writeUTF(Server.names.get(i) + " answerd wrong " + Server.wrongAnsCount.get(i) + " times");
+                dos.writeUTF(Server.names.get(i) + " has " + Server.points.get(i) + " points");
             }
 
             // Loai nguoi choi thua 3 lan lien tiep
             int tempN = Server.numOfPlayers;
             for (int i=0; i< numOfPlayers; ++i) {
-                System.out.println("Wrong Ans Count:" + Server.wrongAnsCount.get(i) + Server.names.get(i));
                 if (Server.wrongAnsCount.get(i) >= 3) {
+                    dos = new DataOutputStream(Server.listSK.get(i).getOutputStream());
+                    dos.writeUTF("LOSE");
                     Server.listSK.get(i).close();
-                    System.out.println("Đã ngắt kết nối với " + Server.names.get(i));
+                    System.out.println("Player removed: " + Server.names.get(i));
+                    try {
+                        for (Socket item : Server.listSK) {
+                            if (item != Server.listSK.get(i)) {
+                                dos = new DataOutputStream(item.getOutputStream());
+                                dos.writeUTF("Player removed: " + Server.names.get(i));
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Server.listSK.remove(i);
                     Server.names.remove(i);
                     Server.wrongAnsCount.remove(i);
@@ -307,11 +358,15 @@ public class Server {
                     i -= 1;
                 }
             }
-
+            System.out.println("\n\n");
         }
 
 
-        System.out.println("Da toi dich");
+        System.out.println("Game end!");
+        System.out.println("Start NEW GAME? \n Yes or No");
+        Scanner sc = new Scanner(System.in);
+        playAgain = sc.nextLine();
+        } while (playAgain.contains("Y"));
     }
 }
 
@@ -331,11 +386,9 @@ class ReadAnswer extends Thread {
 
         try {
             int socketIndex = Server.listSK.indexOf(socket);
-            System.out.println("Socket index is: " + socketIndex);
             DataInputStream dis = new DataInputStream(socket.getInputStream());
 
             String resultStr = dis.readUTF();
-            //System.out.println(resultStr);
 
             String pattern = "([-\\d]+)";
             Pattern patt = Pattern.compile(pattern);
@@ -345,11 +398,13 @@ class ReadAnswer extends Thread {
             if (matcher.find()) {
                 extractNum = matcher.group();
             }
-            System.out.println(extractNum);
 
             try {
                 int result_int = Integer.parseInt(extractNum);
-                System.out.println("Ket qua cua " + Server.names.get(socketIndex) + " :" + result_int);
+                if (result_int != 999999999) {
+                    System.out.println("Player " + Server.names.get(socketIndex) + " answer: " + result_int);
+                }
+
 
                 if (result_int == ReadAnswer.answer && Server.firstSocket.isEmpty()) {
                     Server.receivedAnsCorrect.set(socketIndex, true);
@@ -362,13 +417,11 @@ class ReadAnswer extends Thread {
                     Server.wrongAnsCount.set(socketIndex, Server.wrongAnsCount.get(socketIndex) + 1);
                 }
 
-                System.out.println(Server.names.get(socketIndex) + ": receivedAnsCorrect: " + Server.receivedAnsCorrect.get(socketIndex));
-                System.out.println(Server.names.get(socketIndex) + ": wrongAnsCount: " + Server.wrongAnsCount.get(socketIndex));
+                System.out.println(Server.names.get(socketIndex) + " answer is correct: " + Server.receivedAnsCorrect.get(socketIndex));
             }
             catch (Exception e) {
                 Server.wrongAnsCount.set(socketIndex, Server.wrongAnsCount.get(socketIndex) + 1);
-                System.out.println(Server.names.get(socketIndex) + ": receivedAnsCorrect: " + Server.receivedAnsCorrect.get(socketIndex));
-                System.out.println(Server.names.get(socketIndex) + ": wrongAnsCount: " + Server.wrongAnsCount.get(socketIndex));
+                System.out.println(Server.names.get(socketIndex) + " answer is correct: " + Server.receivedAnsCorrect.get(socketIndex));
             }
 
         } catch (Exception e) {

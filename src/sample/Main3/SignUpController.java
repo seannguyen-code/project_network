@@ -70,7 +70,7 @@ public class SignUpController
 		Client.dos.writeUTF(nickname.getText());
 		String sms = Client.dis.readUTF();
 
-		if (sms.contains("Ten da ton tai, doi ten di")) {
+		if (sms.contains("Name already exists")) {
 			alert.setContentText("Name already exists!");
 			alert.show();
 			return;

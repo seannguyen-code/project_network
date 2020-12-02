@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
@@ -21,8 +22,17 @@
             <Font name="Courier" size="24.0" />
          </font>
       </TextField>
-      <ScrollPane layoutX="427.0" opacity="0.65" prefHeight="400.0" prefWidth="207.0" />
-      <TextArea id="question" fx:id="question" layoutX="37.0" layoutY="56.0" prefHeight="93.0" prefWidth="344.0" promptText="Question will be shown here" />
+      <ScrollPane layoutX="427.0" opacity="0.65" prefHeight="400.0" prefWidth="207.0">
+         <content>
+            <TextArea fx:id="chatlog" prefHeight="398.0" prefWidth="200.0" />
+         </content></ScrollPane>
+      <TextArea id="question" fx:id="question" editable="false" layoutX="37.0" layoutY="56.0" prefHeight="93.0" prefWidth="344.0" promptText="Question will be shown here" AnchorPane.topAnchor="56.0">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <font>
+            <Font name="Calibri Bold" size="15.0" />
+         </font></TextArea>
       <Button fx:id="submit" layoutX="269.0" layoutY="187.0" mnemonicParsing="false" onAction="#submitAns" text="Submit" />
    </children>
 </AnchorPane>

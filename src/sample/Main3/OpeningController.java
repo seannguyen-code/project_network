@@ -13,21 +13,6 @@ public class OpeningController
 {
 	private RootController rootController;
 
-	//private Controller mainApp;		// Reference to the main application
-
-//	@FXML private Button ruleButton;
-//	@FXML private Button startButton;
-//	@FXML private Button quitButton;
-//
-//	/**
-//	 * Initializes the controller class after the fxml file.
-//	 */
-//	@FXML private void initialize() {
-//        ruleButton.setText("RULES");
-//        startButton.setText("START GAME");
-//        quitButton.setText("QUIT");
-//    }
-
 	/**
 	 * Listeners, for when the user clicks a button
 	 * @throws Exception when file not found
