@@ -18,17 +18,17 @@
             <Image url="@images/logo.png" />
          </image>
       </ImageView>
-      <Button fx:id="ruleButton" cancelButton="true" layoutX="160.0" layoutY="280.0" onAction="#rulePress" mnemonicParsing="false" text="Rules" textAlignment="CENTER" textFill="#170404">
+      <Button fx:id="ruleButton" blendMode="SCREEN" cancelButton="true" layoutX="160.0" layoutY="280.0" mnemonicParsing="false" onAction="#rulePress" text="Rules" textAlignment="CENTER" textFill="#170404">
          <font>
             <Font name="Courier" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="startButton" defaultButton="true" layoutX="250.0" layoutY="276.0" onAction="#startPress" lineSpacing="3.0" mnemonicParsing="false" text="START GAME" textAlignment="CENTER" textFill="#d72525" wrapText="true">
+      <Button fx:id="startButton" blendMode="SCREEN" defaultButton="true" layoutX="250.0" layoutY="276.0" lineSpacing="3.0" mnemonicParsing="false" onAction="#startPress" text="START GAME" textAlignment="CENTER" textFill="#d72525" wrapText="true">
          <font>
             <Font name="Courier" size="18.0" />
          </font>
       </Button>
-      <Button fx:id="quitButton" cancelButton="true" layoutX="407.0" layoutY="280.0" onAction="#quitPress" mnemonicParsing="false" text="Quit" textAlignment="CENTER" textFill="#170404">
+      <Button fx:id="quitButton" blendMode="SCREEN" cancelButton="true" layoutX="407.0" layoutY="280.0" mnemonicParsing="false" onAction="#quitPress" text="Quit" textAlignment="CENTER" textFill="#170404">
          <font>
             <Font name="Courier" size="14.0" />
          </font>

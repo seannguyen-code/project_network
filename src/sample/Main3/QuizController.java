@@ -21,7 +21,7 @@ public class QuizController
     @FXML private TextArea chatlog;
     @FXML private TextField answer;
     @FXML private Button submit;
-    @FXML private TextArea question;
+    @FXML private TextField question;
     /**
      * Listeners, for when the user clicks a button
      * @throws Exception when file not found
